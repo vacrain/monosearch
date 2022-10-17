@@ -1,5 +1,4 @@
 import { createApp } from 'vue'
-import './style.css'
-import App from './App.vue'
+import AppProvider from './base/app-provider.vue'
 
-createApp(App).mount('#app')
+createApp(AppProvider).mount('#app')
