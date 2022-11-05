@@ -2,19 +2,25 @@ lockfileVersion: 5.4
 
 specifiers:
   '@vitejs/plugin-vue': ^3.1.0
+  fetch-jsonp: ^1.2.3
+  jquery: ^3.6.1
   naive-ui: ^2.33.5
   typescript: ^4.6.4
   unplugin-auto-import: ^0.11.2
   unplugin-vue-components: ^0.22.8
   vite: ^3.1.0
   vue: ^3.2.37
+  vue-jsonp: ^2.0.0
   vue-tsc: ^0.40.4
 
 dependencies:
+  fetch-jsonp: 1.2.3
+  jquery: 3.6.1
   naive-ui: 2.33.5_vue@3.2.41
   unplugin-auto-import: 0.11.2
   unplugin-vue-components: 0.22.8_vue@3.2.41
   vue: 3.2.41
+  vue-jsonp: 2.0.0
 
 devDependencies:
   '@vitejs/plugin-vue': 3.1.2_vite@3.1.8+vue@3.2.41
@@ -602,6 +608,10 @@ packages:
       reusify: 1.0.4
     dev: false
 
+  /fetch-jsonp/1.2.3:
+    resolution: {integrity: sha512-C13k1o7R9JTN1wmhKkrW5bU/00LwixXnkufQUR6Rbf4KCS0i8mycQaovt4WVbHnA2NKgi7Ryp9Whpy/CGcij6Q==}
+    dev: false
+
   /fill-range/7.0.1:
     resolution: {integrity: sha512-qOo9F+dMUmC2Lcb4BbVvnKJxTPjCm+RRpe4gDuGrzkL7mEVl/djYSu2OdQ2Pa302N4oqkSg9ir6jaLWJ2USVpQ==}
     engines: {node: '>=8'}
@@ -664,6 +674,10 @@ packages:
   /is-number/7.0.0:
     resolution: {integrity: sha512-41Cifkg6e8TylSpdtTpeLVMqvSBEVzTttHvERD741+pnZ8ANv0004MRL43QKPDlK9cGvNp6NZWZUBlbGXYxxng==}
     engines: {node: '>=0.12.0'}
+    dev: false
+
+  /jquery/3.6.1:
+    resolution: {integrity: sha512-opJeO4nCucVnsjiXOE+/PcCgYw9Gwpvs/a6B1LL/lQhwWwpbVEVYDZ1FokFr8PRc7ghYlrFPuyHuiiDNTQxmcw==}
     dev: false
 
   /jsonc-parser/3.2.0:
@@ -1010,6 +1024,10 @@ packages:
     dependencies:
       evtd: 0.2.4
       vue: 3.2.41
+    dev: false
+
+  /vue-jsonp/2.0.0:
+    resolution: {integrity: sha512-Mzd9GNeuKP5hHFDWZNMWOsCuMILSkA6jo2l4A02wheFz3qqBzH7aSEFTey1BRCZCLizlaf1EqJ5YUtF392KspA==}
     dev: false
 
   /vue-tsc/0.40.13_typescript@4.8.4:
