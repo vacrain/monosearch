@@ -1,115 +1,45 @@
 <script setup lang="ts">
   import fetchJsonp from 'fetch-jsonp'
+  import { engineList } from '../data/data'
 
-  const engineList = [
-    {
-      name: 'baidu',
-      showName: '百度',
-      formUrl: 'https://www.baidu.com/s',
-      keyword: 'wd',
-      hotwordUrl: 'https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?',
-      hotwordKeys: ['wd', 'bs'],
-      resIndex: ['g', 'q'],
-      params: {
-        sugmode: 2,
-        json: 1,
-        p: 3,
-        sid: '1442_19033_21106_22075',
-        req: 2,
-        csor: 3,
-        _: 1515232785712
-      },
-      param2: {
-        dataType: 'jsonp',
-        jsonp: 'cb',
-        jsonpCallback: 'success'
-      }
-    },
-    {
-      name: 'google',
-      showName: 'Google',
-      formUrl: 'https://www.google.com.hk/search',
-      keyword: 'q',
-      hotwordUrl: 'https://www.google.com.hk/complete/search?',
-      hotwordKeys: ['q'],
-      resIndex: [1, 0],
-      params: {
-        client: 'psy-ab',
-        hl: 'zh-CN',
-        gs_rn: 64,
-        gs_ri: 'psy-ab',
-        pq: 'sdsd',
-        cp: 3,
-        gs_id: '1jm',
-        xhr: 't'
-      },
-      param2: {
-        dataType: 'jsonp',
-        jsonp: 'callback',
-        jsonpCallback: 'success'
-      }
-    }
-  ]
-
-  let oldHotword = ''
-  let options = $ref([
-    {
-      label: '滨海湾金沙，新加坡111',
-      key: 'marina bay sands',
-      disabled: true
-    },
-    {
-      label: '滨海湾金沙，新加坡222',
-      key: 'marina bay sands',
-      disabled: true
-    },
-    {
-      label: '滨海湾金沙，新加坡333',
-      key: 'marina bay sands',
-      disabled: true
-    }
-  ])
-  let currentHotword = $ref('')
-  let showDropdown = $ref(false)
+  // 引擎
   // 可选默认: baidu google
   let defaultEngineName: String = 'google'
   let currentEngineName = defaultEngineName
 
-  // 显示相关热词
-  const handleRelateHotword = async () => {
-    if (!currentHotword.trim()) {
-      showDropdown = false
-      return
-    }
-    msg('当前热词: ' + currentHotword)
+  // 热词
+  let currentHotword = $ref('')
+  let oldHotword = ''
 
-    // 判断热词是否改变
-    if (oldHotword == currentHotword) {
-      return
+  // 下拉框
+  let showDropdown = $ref(false)
+  let options = $ref([
+    {
+      label: '',
+      key: ''
     }
-    oldHotword = currentHotword
+  ])
 
-    // 得到相关热词
-    const resjson = await getRelateHotword()
-    const relateHotwordList = resjson[1]
-    console.log('relateHotwordList', relateHotwordList)
-
-    // 显示相关热词
-    options = []
-    for (let relateHotword of relateHotwordList) {
-      const hotwordObj = {
-        label: relateHotword[0],
-        key: 'marina bay sands',
-        disabled: true
-      }
-      options.push(hotwordObj)
+  // 得到当前搜索引擎信息
+  const getCurrentEngine = () => {
+    for (let i = 0; i < engineList.length; i++) {
+      if (engineList[i].name == currentEngineName) return engineList[i]
     }
-    showDropdown = true
   }
 
-  // 选中特定推荐搜索内容
-  const handleSelect = (key: string | number) => {
-    window.$message.info(String(key))
+  // 测试消息提醒功能
+  const msg = (str: string) => {
+    window.$message.success(str)
+  }
+
+  // 加粗搜索词
+  const boldValue = (str: string, val: string) => {
+    let arr = str.split(val)
+    let str1 = ''
+    for (let i = 0; i < arr.length; i++) {
+      str1 += arr[i] + (i === arr.length - 1 ? '' : '<b>' + val + '</b>')
+    }
+    return str1
   }
 
   const getRelateHotword = async () => {
@@ -120,15 +50,13 @@
       paramStr += hotwordKey + '=' + currentHotword + '&'
     }
 
-    for (let paramKey in currentEngine!.params) {
-      paramStr += paramKey + '=' + currentEngine!.params[paramKey] + '&'
+    for (let param of currentEngine!.params) {
+      paramStr += param + '&'
     }
 
     paramStr = 'callback=success&' + paramStr.substring(0, paramStr.length - 1)
 
     const fetchUrl = currentEngine!.hotwordUrl + paramStr
-
-    // let resJson = null
 
     return fetchJsonp(fetchUrl)
       .then(response => {
@@ -143,33 +71,101 @@
       })
   }
 
-  // 得到当前搜索引擎信息
-  const getCurrentEngine = () => {
-    for (let i = 0; i < engineList.length; i++) {
-      if (engineList[i].name == currentEngineName) return engineList[i]
+  /////////////////////////////////////////////////////////////////////////////////
+
+  // 主要功能
+
+  // 显示相关热词列表
+  const handleRelateHotword = async () => {
+    if (!currentHotword.trim()) {
+      showDropdown = false
+      return
     }
+
+    // 判断热词是否改变
+    if (oldHotword == currentHotword) {
+      return
+    }
+    oldHotword = currentHotword
+
+    // 得到相关热词
+    const resjson = await getRelateHotword()
+    const relateHotwordList = resjson[1]
+
+    // 显示相关热词
+    options = []
+    for (const idx of relateHotwordList.keys()) {
+      const hotwordObj = {
+        label: relateHotwordList[idx][0],
+        key: relateHotwordList[idx][0]
+      }
+      options.push(hotwordObj)
+    }
+
+    // 显示列表
+    showDropdown = true
   }
 
-  // 测试消息提醒功能
-  const msg = (str: string) => {
-    window.$message.success(str)
+  // 选中特定推荐搜索内容
+  const handleSelect = (key: string) => {
+    // window.$message.info(String(key))
+
+    currentHotword = key
+    const currentEngine = getCurrentEngine()
+    window.open(
+      currentEngine?.formUrl +
+        currentEngine!.hotwordKeys[0] +
+        '=' +
+        currentHotword
+    )
+
+    showDropdown = false
+  }
+
+  // 选择特定搜索引擎进行查询
+  const selectEngine = (engineName: string) => {
+    currentEngineName = engineName
+    handleSelect(currentHotword)
+  }
+
+  // 设置默认引擎
+  const setDefaultEngine = (engineName: string) => {
+    defaultEngineName = engineName
+    window.$message.info('当前默认搜索引擎: ' + defaultEngineName)
   }
 </script>
 
 <template>
-  <div v-for="(engineItem, idx) in engineList" :key="idx">
-    <n-button @click="msg(engineItem.name)">{{ engineItem.name }}</n-button>
-  </div>
-
-  <n-dropdown :show="showDropdown" :options="options" @select="handleSelect">
-    <n-input
-      v-model:value="currentHotword"
-      @input="handleRelateHotword"
-      clearable
-      type="text"
-      placeholder="请输入要搜索的内容"
-    />
-  </n-dropdown>
+  <n-space vertical size="large">
+    <n-layout>
+      <n-layout-header>
+        <div v-for="(engineItem, idx) in engineList" :key="idx">
+          <n-button @click="selectEngine(engineItem.name)">
+            {{ engineItem.name }}
+          </n-button>
+          <n-button @click="setDefaultEngine(engineItem.name)">
+            设为默认
+          </n-button>
+        </div>
+      </n-layout-header>
+      <n-layout-content content-style="padding: 24px;">
+        <n-dropdown
+          :show="showDropdown"
+          :options="options"
+          @select="handleSelect"
+        >
+          <n-input
+            v-model:value="currentHotword"
+            @input="handleRelateHotword"
+            clearable
+            type="text"
+            placeholder="请输入要搜索的内容"
+          />
+        </n-dropdown>
+      </n-layout-content>
+      <n-layout-footer>声明</n-layout-footer>
+    </n-layout>
+  </n-space>
 </template>
 
 <style scoped></style>
